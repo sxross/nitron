@@ -7,7 +7,8 @@ class AppDelegate
       storeURL = documentsDirectory.URLByAppendingPathComponent("#{applicationName}.sqlite")
 
       error_ptr = Pointer.new(:object)
-      unless persistentStoreCoordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration:nil, URL:storeURL, options:nil, error:error_ptr)
+      
+      unless persistentStoreCoordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration:nil, URL:storeURL, options:persistentStoreOptions, error:error_ptr)
         raise "Can't add persistent SQLite store: #{error_ptr[0].description}"
       end
 
@@ -38,6 +39,13 @@ class AppDelegate
 
   def persistentStoreCoordinator
     @coordinator ||= NSPersistentStoreCoordinator.alloc.initWithManagedObjectModel(managedObjectModel)
+  end
+  
+  def persistentStoreOptions
+    {
+      NSMigratePersistentStoresAutomaticallyOption => true,
+      NSInferMappingModelAutomaticallyOption       => true
+    }
   end
 end
 
